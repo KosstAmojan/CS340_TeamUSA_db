@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parks</title>
+    <link href="styles/style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav>
+        <div class="topnav">
+            <a class="active" , onclick="change_page('index.html')">Home</a>
+            <a onclick="change_page('parks.html')">Parks</a>
+            <a onclick="change_page('rides.html')">Rides</a>
+            <a onclick="change_page('guests.html')">Guests</a>
+            <a onclick="change_page('ridesrating.html')">RidesRating</a>
+            <a onclick="change_page('guestrides.html')">GuestRides</a>
+        </div>
+        <script src="scripts/change_page.js"></script>
+    </nav>
+
+    <div class="center">
+        <h3>Guest to Ride relationship</h3>
+    </div>
+    <div class="center">
+        <p>This page allows you to view and add which guest has been on a specific ride</p>
+    </div>
+
+    <table class="center">
+        <thead>
+            <tr>
+                <th>guestID</th>
+                <th>rideID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="data">
+                <td></td>
+                <td></td>
+                <td><button>Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <form action="" method="post">
+        <fieldset>
+            <legend><em>Add a Realtionship</em></legend>
+            <fieldset>
+                <label>guestID:
+                    <input type="text" name="numerical_input">
+                </label>
+                <br />
+                <label>rideID:
+                    <input type="text" name="numerical_input">
+                </label>
+                <br />
+            </fieldset>
+            <br />
+            <input type="submit" value="Add Realtionship" />
+        </fieldset>
+    </form>
+</body>
+
+</html>
