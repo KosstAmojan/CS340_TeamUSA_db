@@ -19,6 +19,7 @@
             <a onclick="change_page('guestrides.html')">GuestRides</a>
         </div>
         <script src="scripts/change_page.js"></script>
+        <script src="scripts/filter.js"></script>
     </nav>
 
     <div class="center">
@@ -125,6 +126,18 @@
               <input type="submit" value="Update Guest" />
             </fieldset>
           </form>
-    </body>
+
+    <br />
+    <form action="" method="post">
+      <fieldset>
+        <legend><em>Filter Guests</em></legend>
+          <fieldset>
+            <input type="" onkeyup="myFunction()" placeholder="Search for guests..">
+          </fieldset>
+        <br />
+        <input type="submit" value="Search" />
+      </fieldset>
+    </form>
+  </body>
 
 </html>
