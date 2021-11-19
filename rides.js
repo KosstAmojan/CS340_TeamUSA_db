@@ -39,9 +39,8 @@ module.exports = function(){
         });
     }
 
-    /* Find people whose fname starts with a given string in the req */
+    /* Find rides whose name starts with a given string in the req */
     function getRidesWithNameLike(req, res, mysql, context, complete) {
-      //sanitize the input as well as include the % character
        var query = "SELECT Rides.rideID as rideID, name, maxOccupancy, dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON parkID = Parks.name WHERE Rides.name LIKE " + mysql.pool.escape(req.params.s + '%');
       console.log(query)
 
@@ -68,7 +67,7 @@ module.exports = function(){
         });
     }
 
-    /*Display all people. Requires web based javascript to delete users with AJAX*/
+    /*Display all rides. Requires web based javascript to delete users with AJAX*/
 
     router.get('/', function(req, res){
         var callbackCount = 0;
@@ -86,7 +85,7 @@ module.exports = function(){
         }
     });
 
-    /*Display all people from a given homeworld. Requires web based javascript to delete users with AJAX*/
+    /*Display all rides from a given park. Requires web based javascript to delete rides with AJAX*/
     router.get('/filter/:parks', function(req, res){
         var callbackCount = 0;
         var context = {};
@@ -103,7 +102,7 @@ module.exports = function(){
         }
     });
 
-    /*Display all people whose name starts with a given string. Requires web based javascript to delete users with AJAX */
+    /*Display all rides whose name starts with a given string. Requires web based javascript to delete rides with AJAX */
     router.get('/search/:s', function(req, res){
         var callbackCount = 0;
         var context = {};
@@ -119,7 +118,7 @@ module.exports = function(){
         }
     });
 
-    /* Display one person for the specific purpose of updating people */
+    /* Display one ride for the specific purpose of updating the ride */
 
     router.get('/:id', function(req, res){
         callbackCount = 0;
@@ -137,7 +136,7 @@ module.exports = function(){
         }
     });
 
-    /* Adds a person, redirects to the people page after adding */
+    /* Adds a ride, redirects to the rides page after adding */
 
     router.post('/', function(req, res){
         console.log(req.body.parks)
@@ -156,7 +155,7 @@ module.exports = function(){
         });
     });
 
-    /* The URI that update data is sent to in order to update a person */
+    /* The URI that update data is sent to in order to update a ride */
 
     router.put('/:id', function(req, res){
         var mysql = req.app.get('mysql');
@@ -176,7 +175,7 @@ module.exports = function(){
         });
     });
 
-    /* Route to delete a person, simply returns a 202 upon success. Ajax will handle this. */
+    /* Route to delete a ride, simply returns a 202 upon success. Ajax will handle this. */
 
     router.delete('/:id', function(req, res){
         var mysql = req.app.get('mysql');

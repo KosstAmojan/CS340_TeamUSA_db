@@ -1,6 +1,7 @@
 var express = require('express');
 var mysql = require('./dbcon.js');
 var bodyParser = require('body-parser');
+PORT        = 3402;
 
 var app = express();
 var handlebars = require('express-handlebars').create({
