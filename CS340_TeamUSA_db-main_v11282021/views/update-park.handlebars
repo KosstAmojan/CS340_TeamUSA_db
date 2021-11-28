@@ -1,0 +1,17 @@
+<html>
+    <head>
+    <title></title>
+    {{#each styles}}
+        <link rel="stylesheet" href="/styles/{{this}}">
+    {{/each}}
+    </head>
+<h1>Update {{parks.name}}:</h1>
+<form id="update-park" action="/parks" method="post">
+    Name: <input type="text" name="name" value="{{parks.name}}"><br>
+    Maximum Occupancy:<input type="number" name="maxOccupancy" value="{{parks.maxOccupancy}}"><br>
+    Date Built:<input type="date" name="dateBuilt" value="{{parks.dateBuilt}}"><br>
+</form>
+<button onclick="updatePark({{parks.parkID}})">Update</button>
+<script defer>selectParks({{ parks.parkID }});</script>
+
+</html>
