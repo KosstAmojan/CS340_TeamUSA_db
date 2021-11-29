@@ -1,7 +1,7 @@
+
 var express = require('express');
 var mysql = require('./dbcon.js');
 var bodyParser = require('body-parser');
-PORT        = 33402;
 
 var app = express();
 var handlebars = require('express-handlebars').create({
@@ -12,6 +12,7 @@ app.engine('handlebars', handlebars.engine);
 app.use(bodyParser.urlencoded({extended:true}));
 app.use('/static', express.static('public'));
 app.set('view engine', 'handlebars');
+app.set('port', process.argv[2]);
 app.set('mysql', mysql);
 app.use('/parks', require('./parks.js'));
 app.use('/rides', require('./rides.js'));
@@ -31,6 +32,6 @@ app.use(function(err, req, res, next){
   res.render('500');
 });
 
-app.listen(PORT, function(){
-  console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.');
+app.listen(app.get('port'), function(){
+  console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });

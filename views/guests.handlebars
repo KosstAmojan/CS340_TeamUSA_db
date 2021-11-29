@@ -1,0 +1,80 @@
+<html>
+{{#each foo}}
+{{this}}
+{{/each}}
+<nav>
+    <div class="topnav">
+        <a class="active" , href="#" onclick="change_page('index.html')">Home</a>
+        <a href="#" onclick="change_page('/parks')">Parks</a>
+        <a href="#" onclick="change_page('/rides')">Rides</a>
+        <a href="#" onclick="change_page('/guests')">Guests</a>
+        <a href="#" onclick="change_page('/ridesrating')">RidesRating</a>
+        <a href="#" onclick="change_page('/guestrides')">GuestRides</a>
+    </div>
+</nav>
+<div class="center">
+    <h3>Guests in Disney World USA</h3>
+</div>
+<div class="center">
+    <p>This page allows you to view, add, or update an existing Guest</p>
+</div>
+
+<table class="center">
+    <thead>
+        <th>Guest ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Height (feet)</th>
+        <th>Height (inches)</th>
+        <th>Park Name</th>
+    </thead>
+    <tbody>
+        {{#each guests}}
+        <td>{{guestID}}</td>
+        <td>{{firstName}}</td>
+        <td>{{lastName}}</td>
+        <td>{{age}}</td>
+        <td>{{heightFeet}}</td>
+        <td>{{heightInches}}</td>
+        <td>{{name}}</td>
+        <td><button onclick="deleteGuest({{guestID}})">Remove</button></td>
+        <td><a href="/guests/{{guestID}}">Update</a></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table><br><br>
+
+<form id="addGuest" action="/guests" method="post">
+    First Name: <input type="text" name="firstName"><br>
+    Last Name: <input type="text" name="lastName"><br>
+    Age: <input type="number" name="age"><br>
+    Height (feet): <input type="number" name="heightFeet"><br>
+    Height (inches): <input type="number" name="heightInches"><br>
+    Select Park:  <select id="park_selector" name="parkID">
+        {{#each parks}}
+            <option value="{{id}}">{{name}}</option>
+        {{/each}}
+    </select><br>
+    <input type="submit" value="Submit">
+</form>
+<br>
+
+<form id='filter_guests' action='' method=''>
+    <label> Filter by Guest</label>
+    <select id='guests_filter' name="guests">
+        {{#each guests}}
+        <option value="{{guestID}}">{{guestID}} - {{firstName}} {{lastName}}</option>
+        {{/each}}
+    </select><br>
+    <input type="button" value="Filter" onclick="filterGuests()">
+</form><br>
+
+
+<form id='search_guests' action='' method=''>
+    <label> Search Guests by Last Name:</label>
+    <input id='name_search_string' type='text' name='name_search_string' value=''>
+    <input type="button" value="Search" onclick="searchGuestsByLastName()">
+</form>
+
+</html>

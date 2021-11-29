@@ -15,7 +15,7 @@ module.exports = function(){
     }
     
     function getRides(res, mysql, context, complete){
-        mysql.pool.query("SELECT rideID, Parks.parkID, Rides.name, Rides.maxOccupancy, Rides.dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID", function(error, results, fields){
+        mysql.pool.query("SELECT rideID, Rides.parkID as parkID, Rides.name as name, Rides.maxOccupancy as maxOccupancy, Rides.dateBuilt as dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID", function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
@@ -26,9 +26,9 @@ module.exports = function(){
     }
 
     function getRidebyParks(req, res, mysql, context, complete){
-      var query = "SELECT Rides.rideID, name Parks.parkID AS parkID FROM Parks INNER JOIN Parks ON parkID = Parks.parkID WHERE Rides.parkID = ?";
+      var query = "SELECT Rides.rideID, Rides.parkId as parkID, Rides.name, Rides.maxOccupancy, Rides.dateBuilt, Rides.lengthSeconds, Rides.speedMPH, Rides.hasLoop, Rides.heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID WHERE Rides.parkID = ?";
       console.log(req.params)
-      var inserts = [req.params.homeworld]
+      var inserts = [req.params.parks]
       mysql.pool.query(query, inserts, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
@@ -41,7 +41,7 @@ module.exports = function(){
 
     /* Find rides whose name starts with a given string in the req */
     function getRidesWithNameLike(req, res, mysql, context, complete) {
-       var query = "SELECT Rides.rideID as rideID, name, maxOccupancy, dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON parkID = Parks.name WHERE Rides.name LIKE " + mysql.pool.escape(req.params.s + '%');
+       var query = "SELECT rideID, parkID, name, maxOccupancy, dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides WHERE name LIKE " + mysql.pool.escape(req.params.s + '%');
       console.log(query)
 
       mysql.pool.query(query, function(error, results, fields){
@@ -72,7 +72,7 @@ module.exports = function(){
     router.get('/', function(req, res){
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["deleteride.js","filterride.js","searchride.js"];
+        context.jsscripts = ["deleteride.js","filterride.js","searchride.js","updateride.js","change_page.js"];
         var mysql = req.app.get('mysql');
         getParks(res, mysql, context, complete);
         getRides(res, mysql, context, complete);
@@ -89,16 +89,15 @@ module.exports = function(){
     router.get('/filter/:parks', function(req, res){
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["deleteride.js","filterride.js","searchride.js"];
+        context.jsscripts = ["deleteride.js","filterride.js","searchride.js","updateride.js","change_page.js"];
         var mysql = req.app.get('mysql');
         getRidebyParks(req,res, mysql, context, complete);
-        getParks(res, mysql, context, complete);
+        getParks( res, mysql, context, complete);
         function complete(){
             callbackCount++;
             if(callbackCount >= 2){
                 res.render('rides', context);
             }
-
         }
     });
 
@@ -106,7 +105,7 @@ module.exports = function(){
     router.get('/search/:s', function(req, res){
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["deleteride.js","filterride.js","searchride.js"];
+        context.jsscripts = ["deleteride.js","filterride.js","searchride.js","updateride.js","change_page.js"];
         var mysql = req.app.get('mysql');
         getRidesWithNameLike(req, res, mysql, context, complete);
         getParks(res, mysql, context, complete);
@@ -121,9 +120,9 @@ module.exports = function(){
     /* Display one ride for the specific purpose of updating the ride */
 
     router.get('/:id', function(req, res){
-        callbackCount = 0;
+        var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["selectedpark.js", "updateride.js"];
+        context.jsscripts = ["updateride.js","change_page.js"];
         var mysql = req.app.get('mysql');
         getRide(res, mysql, context, req.params.id, complete);
         getParks(res, mysql, context, complete);
@@ -161,8 +160,8 @@ module.exports = function(){
         var mysql = req.app.get('mysql');
         console.log(req.body)
         console.log(req.params.id)
-        var sql = "UPDATE Rides SET parkID=?, name=?, maxOccupancy=?, dateBuilt=?, lengthSeconds=?, speedMPH=?, hasLoop=?, heightRestrictionFeet=? WHERE rideID=?";
-        var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet];
+        var sql = "UPDATE Rides SET name=?, maxOccupancy=?, dateBuilt=?, lengthSeconds=?, speedMPH=?, hasLoop=?, heightRestrictionFeet=? WHERE rideID=?";
+        var inserts = [req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet, req.params.id];
         sql = mysql.pool.query(sql,inserts,function(error, results, fields){
             if(error){
                 console.log(error)

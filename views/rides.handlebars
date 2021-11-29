@@ -1,15 +1,16 @@
 <html>
+{{#each foo}}
+{{this}}
+{{/each}}
 <nav>
     <div class="topnav">
-        <a class="active" , onclick="change_page('index.html')">Home</a>
-        <a onclick="change_page('parks.html')">Parks</a>
-        <a onclick="change_page('rides.html')">Rides</a>
-        <a onclick="change_page('guests.html')">Guests</a>
-        <a onclick="change_page('ridesrating.html')">RidesRating</a>
-        <a onclick="change_page('guestrides.html')">GuestRides</a>
+        <a class="active" , href="#" onclick="change_page('index.html')">Home</a>
+        <a href="#" onclick="change_page('/parks')">Parks</a>
+        <a href="#" onclick="change_page('/rides')">Rides</a>
+        <a href="#" onclick="change_page('/guests')">Guests</a>
+        <a href="#" onclick="change_page('/ridesrating')">RidesRating</a>
+        <a href="#" onclick="change_page('/guestrides')">GuestRides</a>
     </div>
-    <script src="scripts/change_page.js"></script>
-    <script src="scripts/filter.js"></script>
 </nav>
 <div class="center">
     <h3>Rides in Disney World USA</h3>
@@ -32,17 +33,17 @@
     </thead>
     <tbody>
         {{#each rides}}
-        <td>{{rideID}}</td>
-        <td>{{parkID}}</td>
-        <td>{{name}}</td>
-        <td>{{maxOccupancy}}</td>
-        <td>{{dateBuilt}}</td>
-        <td>{{lengthSeconds}}</td>
-        <td>{{speedMPH}}</td>
-        <td>{{hasLoop}}</td>
-        <td>{{heightRestrictionFeet}}</td>
-        <td><button onclick="deleteRide({{rideID}})">Remove</button></td>
-        <td><a href="/rides/{{rideID}}">Update</a></td>
+            <td>{{rideID}}</td>
+            <td>{{parkID}}</td>
+            <td>{{name}}</td>
+            <td>{{maxOccupancy}}</td>
+            <td>{{dateBuilt}}</td>
+            <td>{{lengthSeconds}}</td>
+            <td>{{speedMPH}}</td>
+            <td>{{hasLoop}}</td>
+            <td>{{heightRestrictionFeet}}</td>
+            <td><button onclick="deleteRide({{rideID}})">Remove</button></td>
+            <td><a href="/rides/{{rideID}}">Update</a></td>
         </tr>
         {{/each}}
     </tbody>
