@@ -1,6 +1,6 @@
-function deleteGuest(id){
+function deleteRideRating(id){
     $.ajax({
-        url: '/guests/' + id,
+        url: '/ridesrating/' + id,
         type: 'DELETE',
         success: function(result){
             window.location.reload(true);

@@ -8,8 +8,8 @@
         <a href="#" onclick="change_page('/parks')">Parks</a>
         <a href="#" onclick="change_page('/rides')">Rides</a>
         <a href="#" onclick="change_page('/guests')">Guests</a>
-        <a href="#" onclick="change_page('/ridesrating')">RidesRating</a>
-        <a href="#" onclick="change_page('/guestrides')">GuestRides</a>
+        <a href="#" onclick="change_page('/ridesrating')">Ride Ratings</a>
+        <a href="#" onclick="change_page('/guestrides')">Guest Rides</a>
     </div>
 </nav>
 <div class="center">
@@ -21,10 +21,10 @@
 
 <table class="center">
     <thead>
-        <th>parkID</th>
-        <th>name</th>
-        <th>maxOccupancy</th>
-        <th>dateBuilt</th>
+        <th>Park ID</th>
+        <th>Name</th>
+        <th>Max Occupancy</th>
+        <th>Date Built</th>
     </thead>
     <tbody>
         {{#each parks}}
@@ -40,16 +40,17 @@
 </table><br><br>
 
 <form id="addpark" action="/parks" method="post">
-    Name: <input type="text" name="name"><br>
-    Maximum Occupancy: <input type="number" name="maxOccupancy"><br>
-    Date Built: <input type="date" name="dateBuilt"><br>
+    Name: <input type="text" name="name" required><br>
+    Maximum Occupancy: <input type="number" name="maxOccupancy" min=1 required><br>
+    Date Built: <input type="date" name="dateBuilt" required><br>
     <input type="submit" value="Submit">
 </form>
 <br>
 
-<form id='filter_parks' action='' method=''>
+<form id='filter_parks' action="" method=''>
     <label> Filter by Park</label>
     <select id='parks_filter' name="parks">
+        <option value="">Please Select</option>
         {{#each parks}}
         <option value="{{parkID}}">{{parkID}} - {{name}}</option>
         {{/each}}
@@ -60,8 +61,8 @@
 
 <form id='search_parks' action='' method=''>
     <label> Search Parks by name:</label>
-    <input id='name_search_string' type='text' name='name_search_string' value=''>
-    <input type="button" value="Search" onclick="searchParksByName()">
+    <input id='park_name_search_string' type='text' name='park_name_search_string' value=''>
+    <input type="button" value="Search" placeholder="" onclick="searchParksByName()">
 </form>
 
 </html>

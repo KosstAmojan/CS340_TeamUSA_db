@@ -1,8 +1,8 @@
-function updateRide(id){
+function updateRideRating(id){
     $.ajax({
-        url: '/rides/' + id,
+        url: '/ridesrating/' + id,
         type: 'PUT',
-        data: $('#update-ride').serialize(),
+        data: $('#update-riderating').serialize(),
         success: function(result){
             window.location.replace("./");
         }
