@@ -15,31 +15,31 @@ module.exports = function () {
     }
 
     /* Find parks whose name starts with a given string in the req */
-    function getParksWithNameLike(req, res, mysql, context, complete) {
-        if (req.params.s == "") {
-            var query = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%m/%d/%Y') as dateBuilt FROM Parks";
-        }
-        else {
-            var query = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%m/%d/%Y') as dateBuilt FROM Parks where name LIKE " + mysql.pool.escape('%' + req.params.s + '%');
-        }
-        console.log(query);
-        console.log(req.params.s);
+    // function getParksWithNameLike(req, res, mysql, context, complete) {
+    //     if (req.params.s == "") {
+    //         var query = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%m/%d/%Y') as dateBuilt FROM Parks";
+    //     }
+    //     else {
+    //         var query = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%m/%d/%Y') as dateBuilt FROM Parks where name LIKE " + mysql.pool.escape('%' + req.params.s + '%');
+    //     }
+    //     console.log(query);
+    //     console.log(req.params.s);
 
-        mysql.pool.query(query, function (error, results, fields) {
-            if (error) {
-                res.write(JSON.stringify(error));
-                res.end();
-            }
-            context.parks = results;
-            complete();
-        });
-    }
+    //     mysql.pool.query(query, function (error, results, fields) {
+    //         if (error) {
+    //             res.write(JSON.stringify(error));
+    //             res.end();
+    //         }
+    //         context.parks = results;
+    //         complete();
+    //     });
+    // }
 
     function getPark(req, res, mysql, context, complete) {
-        var sql = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%m/%d/%Y') as dateBuilt FROM Parks WHERE parkID = ?";
+        var sql = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%Y-%m-%d') as dateBuilt FROM Parks WHERE parkID = ?";
         var inserts = [req.params.parks];
         if (isNaN(inserts)) {
-            var sql = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%m/%d/%Y') as dateBuilt FROM Parks";
+            var sql = "SELECT parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%Y-%m-%d') as dateBuilt FROM Parks";
         }
         mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
@@ -81,20 +81,20 @@ module.exports = function () {
         }
     });
 
-    router.get('/search', function (req, res) {
-        var callbackCount = 0;
-        var context = {};
-        context.jsscripts = ["deletepark.js", "filterpark.js", "searchpark.js", "change_page.js"];
-        var mysql = req.app.get('mysql');
-        getParks(res, mysql, context, complete);
-        function complete() {
-            callbackCount++;
-            if (callbackCount >= 1) {
-                res.render('parks', context);
-            }
+    // router.get('/search', function (req, res) {
+    //     var callbackCount = 0;
+    //     var context = {};
+    //     context.jsscripts = ["deletepark.js", "filterpark.js", "searchpark.js", "change_page.js"];
+    //     var mysql = req.app.get('mysql');
+    //     getParks(res, mysql, context, complete);
+    //     function complete() {
+    //         callbackCount++;
+    //         if (callbackCount >= 1) {
+    //             res.render('parks', context);
+    //         }
 
-        }
-    });
+    //     }
+    // });
 
     // Display all parks filtered
     router.get('/filter/:parks', function (req, res) {
@@ -114,19 +114,19 @@ module.exports = function () {
     });
 
     /* Display all parks whose name starts with a given string. Requires web based javascript to delete parks with AJAX */
-    router.get('/search/:s', function (req, res) {
-        var callbackCount = 0;
-        var context = {};
-        context.jsscripts = ["deletepark.js","filterpark.js", "searchpark.js", "updatepark.js", "change_page.js"/*, "selectedpark.js"*/];
-        var mysql = req.app.get('mysql');
-        getParksWithNameLike(req, res, mysql, context, complete);
-        function complete() {
-            callbackCount++;
-            if (callbackCount >= 1) {
-                res.render('parks', context);
-            }
-        }
-    });
+    // router.get('/search/:s', function (req, res) {
+    //     var callbackCount = 0;
+    //     var context = {};
+    //     context.jsscripts = ["deletepark.js","filterpark.js", "searchpark.js", "updatepark.js", "change_page.js"/*, "selectedpark.js"*/];
+    //     var mysql = req.app.get('mysql');
+    //     getParksWithNameLike(req, res, mysql, context, complete);
+    //     function complete() {
+    //         callbackCount++;
+    //         if (callbackCount >= 1) {
+    //             res.render('parks', context);
+    //         }
+    //     }
+    // });
 
     /* Display one park for the specific purpose of updating the park */
 

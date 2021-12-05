@@ -7,20 +7,21 @@
 </head>
 <h1>Update {{rides.name}}:</h1>
 <form id="update-ride" action="/rides" method="post">
-    Name: <input type="text" name="name" value="{{rides.name}}"><br>
-    In which Park: <select name="parks" id="park-selector"><br>
+    Name: <input type="text" name="name" value="{{rides.name}}" required><br>
+    In which Park: <select name="parkID" id="park_selector" type="number">
         {{#each parks}}
-        <option value="{{parkID}}">{{name}}</option>
+            <option value="{{id}}">{{id}} - {{name}}</option>
         {{/each}}
     </select><br>
-    Maximum Occupancy:<input type="number" name="maxOccupancy" value="{{rides.maxOccupancy}}"><br>
-    Date Built:<input type="datetime" name="dateBuilt" value="{{rides.dateBuilt}}"><br>
-    Length of ride (seconds):<input type="number" name="lengthSeconds" value="{{rides.lengthSeconds}}"><br>
-    Speed MPH:<input type="number" name="speedMPH" value="{{rides.speedMPH}}"><br>
-    Has a loop?:<input type="text" name="hasLoop" value="{{rides.hasLoop}}"><br>
+    Maximum Occupancy:<input type="number" name="maxOccupancy" value="{{rides.maxOccupancy}}" min=1 required><br>
+    Date Built:<input type="date" name="dateBuilt" value="{{rides.dateBuilt}}"><br>
+    Length of ride (seconds):<input type="number" name="lengthSeconds" value="{{rides.lengthSeconds}}" min=1 required><br>
+    Speed MPH:<input type="number" name="speedMPH" value="{{rides.speedMPH}}" min=1 required><br>
+    Has a loop?: <input type="radio" id="loop" name="hasLoop" value="1" {{rides.hasLoop_yes}} required><label for="loop">Yes</label><input type="radio" id="no_loop" name="hasLoop" value="0" {{rides.hasLoop_no}} required><label for="no_loop">No</label><br>
     Height Restriction (feet):<input type="number" name="heightRestrictionFeet" value="{{rides.heightRestrictionFeet}}"><br>
 </form>
 <button onclick="updateRide({{rides.rideID}})">Update</button>
-<script defer>selectParks({{ rides.parkID }});</script>
+<script defer>selectRide({{rides.rideID}});</script>
+<script defer>selectPark({{rides.parkID}});</script>
 
 </html>

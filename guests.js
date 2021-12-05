@@ -26,7 +26,7 @@ module.exports = function(){
   
     /* Find guests whose name starts with a given string in the req */
     function getGuestsWithNameLike(req, res, mysql, context, complete) {
-        var query = "SELECT age, firstName, guestID, heightFeet, heightInches, lastName, Parks.name as name, Guests.parkID as parkID from Guests INNER JOIN Parks on Guests.parkID = Parks.parkID WHERE lastName LIKE " + mysql.pool.escape(req.params.s + '%');
+        var query = "SELECT age, firstName, guestID, heightFeet, heightInches, lastName, Parks.name as name, Guests.parkID as parkID from Guests INNER JOIN Parks on Guests.parkID = Parks.parkID WHERE lastName LIKE " + mysql.pool.escape('%' + req.params.s + '%');
         console.log(query)
         mysql.pool.query(query, function(error, results, fields){
             if(error){
@@ -81,6 +81,23 @@ module.exports = function(){
         }
     });
   
+    router.get('/search', function(req, res){
+        var callbackCount = 0;
+        var context = {};
+        context.jsscripts = ["deleteguest.js","filterguest.js","searchguest.js","selectedpark.js","change_page.js"];
+        var mysql = req.app.get('mysql');
+        getGuests(res, mysql, context, complete);
+        getParks(res, mysql, context, complete)
+        function complete(){
+            callbackCount++;
+            if(callbackCount >= 2){
+                res.render('guests', context);
+            }
+  
+        }
+    });
+  
+
     // Display all guests filtered
     router.get('/filter/:guests', function(req, res){
       var callbackCount = 0;
@@ -109,7 +126,7 @@ module.exports = function(){
         getParks(res, mysql, context, complete);
         function complete(){
             callbackCount++;
-            if(callbackCount >= 1){
+            if(callbackCount >= 2){
                 res.render('guests', context);
             }
         }
@@ -136,9 +153,9 @@ module.exports = function(){
     /* Adds a guest, redirects to the guest page after adding */
   
     router.post('/', function(req, res){
-        console.log(req.body.Parks)
-        console.log(req.body.guests)
-        console.log(req.body)
+        // console.log(req.body.Parks)
+        // console.log(req.body.guests)
+        // console.log(req.body)
         var mysql = req.app.get('mysql');
         var sql = "INSERT INTO Guests (age, firstName, heightFeet, heightInches, lastName, parkID) VALUES (?,?,?,?,?,?)";
         var inserts = [req.body.age, req.body.firstName, req.body.heightFeet, req.body.heightInches, req.body.lastName, req.body.parkID];
@@ -159,9 +176,9 @@ module.exports = function(){
   
     router.put('/:id', function(req, res){
         var mysql = req.app.get('mysql');
-        console.log(req.body)
-        console.log(req.params.id)
-        console.log(req.body.parkID)
+        // console.log(req.body)
+        // console.log(req.params.id)
+        // console.log(req.body.parkID)
         var sql = "UPDATE Guests SET age=?, firstName=?, heightFeet=?, heightInches=?, lastName=?, parkID=? WHERE guestID=?";
         var inserts = [req.body.age, req.body.firstName, req.body.heightFeet, req.body.heightInches, req.body.lastName, req.body.parkID, req.params.id];
         sql = mysql.pool.query(sql,inserts,function(error, results, fields){

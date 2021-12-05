@@ -4,7 +4,7 @@ module.exports = function(){
 
 
     function getParks(res, mysql, context, complete){
-        mysql.pool.query("SELECT parkID, name FROM Parks", function(error, results, fields){
+        mysql.pool.query("SELECT parkID as id, name FROM Parks", function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
@@ -13,9 +13,9 @@ module.exports = function(){
             complete();
         });
     }
-    
+
     function getRides(res, mysql, context, complete){
-        mysql.pool.query("SELECT rideID, Rides.parkID as parkID, Rides.name as name, Rides.maxOccupancy as maxOccupancy, Rides.dateBuilt as dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID", function(error, results, fields){
+        mysql.pool.query("SELECT rideID, Rides.parkID as parkID, Rides.name as name, Rides.maxOccupancy as maxOccupancy, DATE_FORMAT(Rides.dateBuilt, '%Y-%m-%d') as dateBuilt, lengthSeconds, speedMPH, CASE WHEN hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID", function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
@@ -26,9 +26,8 @@ module.exports = function(){
     }
 
     function getRidebyParks(req, res, mysql, context, complete){
-      var query = "SELECT Rides.rideID, Rides.parkId as parkID, Rides.name, Rides.maxOccupancy, Rides.dateBuilt, Rides.lengthSeconds, Rides.speedMPH, Rides.hasLoop, Rides.heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID WHERE Rides.parkID = ?";
-      console.log(req.params)
-      var inserts = [req.params.parks]
+      var query = "SELECT Rides.rideID, Rides.parkId as parkID, Rides.name, Rides.maxOccupancy, DATE_FORMAT(Rides.dateBuilt, '%Y-%m-%d') as dateBuilt, Rides.lengthSeconds, Rides.speedMPH, CASE WHEN Rides.hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, Rides.heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID WHERE Rides.parkID = ?";
+      var inserts = [req.params.parkdID]
       mysql.pool.query(query, inserts, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
@@ -41,9 +40,7 @@ module.exports = function(){
 
     /* Find rides whose name starts with a given string in the req */
     function getRidesWithNameLike(req, res, mysql, context, complete) {
-       var query = "SELECT rideID, parkID, name, maxOccupancy, dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides WHERE name LIKE " + mysql.pool.escape(req.params.s + '%');
-      console.log(query)
-
+       var query = "SELECT rideID, parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%Y-%m-%d') as dateBuilt, lengthSeconds, speedMPH, CASE WHEN hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, heightRestrictionFeet FROM Rides WHERE name LIKE " + mysql.pool.escape(req.params.s + '%');
       mysql.pool.query(query, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
@@ -54,11 +51,11 @@ module.exports = function(){
         });
     }
 
-    function getRide(res, mysql, context, id, complete){
-        var sql = "SELECT Rides.rideID as rideID, parkID, name, maxOccupancy, dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet FROM Rides WHERE rideID = ?";
+    function getRideName(res, mysql, context, id, complete) {
+        var sql = "SELECT Rides.parkID, Parks.name, Rides.rideID, Rides.name, Rides.maxOccupancy, DATE_FORMAT(Rides.dateBuilt, '%Y-%m-%d') as dateBuilt, Rides.lengthSeconds, Rides.speedMPH, Rides.hasLoop, CASE WHEN Rides.hasLoop = 1 THEN 'checked' ELSE '' END AS hasLoop_yes, CASE WHEN Rides.hasLoop = 1 THEN '' ELSE 'checked' END AS hasLoop_no, Rides.heightRestrictionFeet FROM Rides LEFT JOIN Parks on Rides.parkID = Parks.parkID WHERE rideID = ?";
         var inserts = [id];
-        mysql.pool.query(sql, inserts, function(error, results, fields){
-            if(error){
+        mysql.pool.query(sql, inserts, function (error, results, fields) {
+            if (error) {
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -67,7 +64,8 @@ module.exports = function(){
         });
     }
 
-    /*Display all rides. Requires web based javascript to delete users with AJAX*/
+ 
+    /* Display all rides. Requires web based javascript to delete users with AJAX*/
 
     router.get('/', function(req, res){
         var callbackCount = 0;
@@ -85,6 +83,39 @@ module.exports = function(){
         }
     });
 
+    /* The next two routers handle no selections on the filter or search but the button was clicked */
+
+    router.get('/filter/-1', function(req, res){
+        var callbackCount = 0;
+        var context = {};
+        context.jsscripts = ["deleteride.js","filterride.js","searchride.js","updateride.js","change_page.js"];
+        var mysql = req.app.get('mysql');
+        getParks(res, mysql, context, complete);
+        getRides(res, mysql, context, complete);
+        function complete(){
+            callbackCount++;
+            if(callbackCount >= 2){
+                res.render('rides', context);
+            }
+
+        }
+    });
+
+    router.get('/search', function(req, res){
+        var callbackCount = 0;
+        var context = {};
+        context.jsscripts = ["deleteride.js","filterride.js","searchride.js","updateride.js","change_page.js"];
+        var mysql = req.app.get('mysql');
+        getParks(res, mysql, context, complete);
+        getRides(res, mysql, context, complete);
+        function complete(){
+            callbackCount++;
+            if(callbackCount >= 2){
+                res.render('rides', context);
+            }
+        }
+    });
+
     /*Display all rides from a given park. Requires web based javascript to delete rides with AJAX*/
     router.get('/filter/:parks', function(req, res){
         var callbackCount = 0;
@@ -92,7 +123,7 @@ module.exports = function(){
         context.jsscripts = ["deleteride.js","filterride.js","searchride.js","updateride.js","change_page.js"];
         var mysql = req.app.get('mysql');
         getRidebyParks(req,res, mysql, context, complete);
-        getParks( res, mysql, context, complete);
+        getParks(res, mysql, context, complete);
         function complete(){
             callbackCount++;
             if(callbackCount >= 2){
@@ -122,9 +153,9 @@ module.exports = function(){
     router.get('/:id', function(req, res){
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["updateride.js","change_page.js"];
+        context.jsscripts = ["updateride.js","selectedride.js","selectedpark.js","change_page.js"];
         var mysql = req.app.get('mysql');
-        getRide(res, mysql, context, req.params.id, complete);
+        getRideName(res, mysql, context, req.params.id, complete);
         getParks(res, mysql, context, complete);
         function complete(){
             callbackCount++;
@@ -138,11 +169,21 @@ module.exports = function(){
     /* Adds a ride, redirects to the rides page after adding */
 
     router.post('/', function(req, res){
-        console.log(req.body.parks)
-        console.log(req.body)
         var mysql = req.app.get('mysql');
         var sql = "INSERT INTO Rides (parkID, name, maxOccupancy, dateBuilt, lengthSeconds, speedMPH, hasLoop, heightRestrictionFeet) VALUES (?,?,?,?,?,?,?,?)";
-        var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet];
+        /* Handle all possible null value cases */
+        if (req.body.dateBuilt == '' && req.body.heightRestrictionFeet == 0) {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, null, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, null];
+        }
+        else if (req.body.dateBuilt == '' && req.body.heightRestrictionFeet != 0) {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, null, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet];
+        }
+        else if (req.body.dateBuilt != '' && req.body.heightRestrictionFeet == 0) {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, null];
+        }
+        else {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet];
+        }
         sql = mysql.pool.query(sql,inserts,function(error, results, fields){
             if(error){
                 console.log(JSON.stringify(error))
@@ -151,18 +192,28 @@ module.exports = function(){
             }else{
                 res.redirect('/rides');
             }
+            });
         });
-    });
 
     /* The URI that update data is sent to in order to update a ride */
 
     router.put('/:id', function(req, res){
         var mysql = req.app.get('mysql');
-        console.log(req.body)
-        console.log(req.params.id)
-        var sql = "UPDATE Rides SET name=?, maxOccupancy=?, dateBuilt=?, lengthSeconds=?, speedMPH=?, hasLoop=?, heightRestrictionFeet=? WHERE rideID=?";
-        var inserts = [req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet, req.params.id];
-        sql = mysql.pool.query(sql,inserts,function(error, results, fields){
+        var sql = "UPDATE Rides SET parkID=?, name=?, maxOccupancy=?, dateBuilt=?, lengthSeconds=?, speedMPH=?, hasLoop=?, heightRestrictionFeet=? WHERE rideID=?";
+        if (req.body.dateBuilt == '' && req.body.heightRestrictionFeet == 0) {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, null, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, null, req.params.id];
+        }
+        else if (req.body.dateBuilt == '' && req.body.heightRestrictionFeet != 0) {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, null, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet, req.params.id];
+        }
+        else if (req.body.dateBuilt != '' && req.body.heightRestrictionFeet == 0) {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, null, req.params.id];
+        }
+        else {
+            var inserts = [req.body.parkID, req.body.name, req.body.maxOccupancy, req.body.dateBuilt, req.body.lengthSeconds, req.body.speedMPH, req.body.hasLoop, req.body.heightRestrictionFeet, req.params.id];    
+        }   
+            // console.log(inserts)     
+            sql = mysql.pool.query(sql,inserts,function(error, results, fields){
             if(error){
                 console.log(error)
                 res.write(JSON.stringify(error));

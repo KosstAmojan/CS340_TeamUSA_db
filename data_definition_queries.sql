@@ -34,8 +34,8 @@ CREATE TABLE `Rides` (
 `dateBuilt` date,
 `lengthSeconds` int not NULL,
 `speedMPH` int not NULL,
-`hasLoop` BOOLEAN,
-`heightRestrictionFeet` int not NULL,
+`hasLoop` BOOLEAN not NULL,
+`heightRestrictionFeet` int NULL,
 PRIMARY KEY (`rideID`),
 FOREIGN KEY (`parkID`) REFERENCES `Parks` (`parkID`)
 ) ENGINE=InnoDB;

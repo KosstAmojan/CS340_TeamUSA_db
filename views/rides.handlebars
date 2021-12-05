@@ -4,12 +4,12 @@
 {{/each}}
 <nav>
     <div class="topnav">
-        <a class="active" , href="#" onclick="change_page('index.html')">Home</a>
+        <a class="active" , href="#" onclick="change_page('/')">Home</a>
         <a href="#" onclick="change_page('/parks')">Parks</a>
         <a href="#" onclick="change_page('/rides')">Rides</a>
         <a href="#" onclick="change_page('/guests')">Guests</a>
-        <a href="#" onclick="change_page('/ridesrating')">RidesRating</a>
-        <a href="#" onclick="change_page('/guestrides')">GuestRides</a>
+        <a href="#" onclick="change_page('/ridesrating')">Ride Ratings</a>
+        <a href="#" onclick="change_page('/guestrides')">Guest Rides</a>
     </div>
 </nav>
 <div class="center">
@@ -21,15 +21,15 @@
 
 <table class="center">
     <thead>
-        <th>rideID</th>
-        <th>parkID</th>
-        <th>name</th>
-        <th>maxOccupancy</th>
-        <th>dateBuilt</th>
-        <th>lengthSeconds</th>
-        <th>speedMPH</th>
-        <th>hasLoop</th>
-        <th>heightRestrictionFeet</th>
+        <th>Ride ID</th>
+        <th>Park ID</th>
+        <th>Name</th>
+        <th>Max Occupancy</th>
+        <th>Date Built</th>
+        <th>Length (seconds)</th>
+        <th>Speed (MPH)</th>
+        <th>Has Loop</th>
+        <th>Height Restriction (feet)</th>
     </thead>
     <tbody>
         {{#each rides}}
@@ -52,23 +52,24 @@
 <form id="addride" action="/rides" method="post">
     In which Park: <select name="parkID">
         {{#each parks}}
-        <option value={{parkID}}>{{parkID}} - {{name}}</option>
+        <option value={{id}}>{{id}} - {{name}}</option>
         {{/each}}
     </select><br>
-    Name: <input type="text" name="name"><br>
-    Maximum Occupancy: <input type="number" name="maxOccupancy"><br>
+    Name: <input type="text" name="name" required><br>
+    Maximum Occupancy: <input type="number" name="maxOccupancy" required><br>
     Date Built: <input type="date" name="dateBuilt"><br>
-    Length of ride (seconds): <input type="number" name="lengthSeconds"><br>
-    Speed MPH: <input type="number" name="speedMPH"><br>
-    Has a loop?: <input type="radio" id="loop" name="hasLoop" value="1"><label for="loop">Yes</label><input type="radio" id="no_loop" name="hasLoop" value="0"><label for="no_loop">No</label><br>
+    Length of ride (seconds): <input type="number" name="lengthSeconds" required><br>
+    Speed MPH: <input type="number" name="speedMPH" required><br>
+    Has a loop?: <input type="radio" id="loop" name="hasLoop" value="1" required><label for="loop">Yes</label><input type="radio" id="no_loop" name="hasLoop" value="0"><label for="no_loop">No</label><br>
     Height Restriction (feet): <input type="number" name="heightRestrictionFeet"><br>
     <input type="submit" value="Submit">
 </form>
 <br>
 
-<form id='filter_rides' action='' method=''>
+<form id='filter_rides' action="" method=''>
     <label> Filter by Park</label>
     <select id='parks_filter' name="parks">
+        <option value='-1'>Please Select</option>
         {{#each parks}}
         <option value="{{parkID}}">{{parkID}} - {{name}}</option>
         {{/each}}
@@ -79,8 +80,8 @@
 <form id='search_rides' action='' method=''>
     <!--- this form does not submit directly, the button handles all the interaction with backend -->
     <label> Search Rides by name:</label>
-    <input id='name_search_string' type='text' name='name_search_string' value=''>
-    <input type="button" value="Search" onclick="searchRidesByName()">
+    <input id='name_search_string' type='text' name='name_search_string' value=''><br>
+    <input type="button" value="Search" placeholder="" onclick="searchRidesByName()">
 </form>
 
 </html>
