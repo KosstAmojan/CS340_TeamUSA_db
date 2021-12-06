@@ -4,6 +4,10 @@
     {{#each styles}}
         <link rel="stylesheet" href="/styles/{{this}}">
     {{/each}}
+
+    {{#each this}}
+        {{log this}}    
+    {{/each}}
     </head>
 <h1>Update {{guests.guestID}} - {{guests.lastName}}, {{guests.firstName}}:</h1>
 <form id="update-guest" action="/guests" method="post">

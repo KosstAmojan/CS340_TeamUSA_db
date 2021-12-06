@@ -13,35 +13,33 @@
     </div>
 </nav>
 <div class="center">
-    <h3>Guest Ride Ratings in Disney World USA</h3>
+    <h3>Guest Rides in Disney World USA</h3>
 </div>
 <div class="center">
-    <p>This page allows you to view, add, or update an existing Ride Rating</p>
+    <p>This page allows you to view, add, or update an existing Guest Ride</p>
 </div>
 
 <table class="center">
     <thead>
-        <th>Ride Rating ID</th>
         <th>Guest Name</th>
+        <th>Guest ID</th>
         <th>Ride</th>
-        <th>Rating Datetime</th>
-        <th>Rating</th>
+        <th>Ride ID</th>
     </thead>
     <tbody>
-        {{#each ridesrating}}
-        <td>{{guestRideID}}</td>
+        {{#each guestride}}
         <td>{{guestName}}</td>
+        <td>{{guestID}}</td>
         <td>{{rideName}}</td>
-        <td>{{rideDateTime}}</td>
-        <td>{{ratingvalue}}</td>
-        <td><button onclick="deleteRideRating({{guestRideID}})">Remove</button></td>
-        <td><a href="/ridesrating/{{guestRideID}}">Update</a></td>
+        <td>{{rideID}}</td>
+        <td><button onclick="deleteGuestRide('{{guestrideID}}')">Remove</button></td>
+        <td><a href="/guestride/{{guestrideIDurl}}">Update</a></td>
         </tr>
         {{/each}}
     </tbody>
 </table><br><br>
 
-<form id="addriderating" action="/ridesrating" method="post">
+<form id="addGuestRide" action="/guestride" method="post">
     <!-- Add dynamic selection for guest name, ride name -->
     Select Guest: <select name="guestID" required>
         <option value="" disabled selected>Please Select Guest</option>
@@ -55,28 +53,17 @@
                 <option value="{{id}}">{{id}} - {{name}}</option>
         {{/each}}
     </select><br>
-    Ride DateTime: <input type="datetime-local" name="rideDateTime" required><br>
-    Rating: <select name="ratingValue">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-    </select><br>
     <input type="submit" value="Submit">
 </form>
+{{#each duperr}}
+    <p>{{this}}</p>
+{{/each}}
 <br>
 
-<form id='search_guests' action='' method=''>
-    <label> Search Guests by Last Name:</label>
+<form id='search' action='' method=''>
+    <label> Search Guests and Rides by Name:</label>
     <input id='name_search_string' type='text' name='name_search_string' value=''>
-    <input type="button" value="Search" onclick="searchGuestsByLastNameRR()">
-</form>
-
-<form id='search_rides' action='' method=''>
-    <label> Search Rides by Name:</label>
-    <input id='ride_search_string' type='text' name='ride_search_string' value=''>
-    <input type="button" value="Search" onclick="searchRidesByNameRR()">
+    <input type="button" value="Search" onclick="searchGuestRide()">
 </form>
 
 </html>

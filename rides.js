@@ -15,7 +15,7 @@ module.exports = function(){
     }
 
     function getRides(res, mysql, context, complete){
-        mysql.pool.query("SELECT rideID, Rides.parkID as parkID, Rides.name as name, Rides.maxOccupancy as maxOccupancy, DATE_FORMAT(Rides.dateBuilt, '%Y-%m-%d') as dateBuilt, lengthSeconds, speedMPH, CASE WHEN hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID", function(error, results, fields){
+        mysql.pool.query("SELECT rideID, Rides.parkID as parkID, Parks.name as parkName, Rides.name as name, Rides.maxOccupancy as maxOccupancy, DATE_FORMAT(Rides.dateBuilt, '%Y-%m-%d') as dateBuilt, lengthSeconds, speedMPH, CASE WHEN hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID", function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
@@ -26,7 +26,7 @@ module.exports = function(){
     }
 
     function getRidebyParks(req, res, mysql, context, complete){
-      var query = "SELECT Rides.rideID, Rides.parkId as parkID, Rides.name, Rides.maxOccupancy, DATE_FORMAT(Rides.dateBuilt, '%Y-%m-%d') as dateBuilt, Rides.lengthSeconds, Rides.speedMPH, CASE WHEN Rides.hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, Rides.heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID WHERE Rides.parkID = ?";
+      var query = "SELECT Rides.rideID, Rides.parkId as parkID, Parks.name as parkName, Rides.name, Rides.maxOccupancy, DATE_FORMAT(Rides.dateBuilt, '%Y-%m-%d') as dateBuilt, Rides.lengthSeconds, Rides.speedMPH, CASE WHEN Rides.hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, Rides.heightRestrictionFeet FROM Rides INNER JOIN Parks ON Rides.parkID = Parks.parkID WHERE Rides.parkID = ?";
       var inserts = [req.params.parkdID]
       mysql.pool.query(query, inserts, function(error, results, fields){
             if(error){
@@ -41,7 +41,7 @@ module.exports = function(){
     /* Find rides whose name starts with a given string in the req */
     function getRidesWithNameLike(req, res, mysql, context, complete) {
        var query = "SELECT rideID, parkID, name, maxOccupancy, DATE_FORMAT(dateBuilt, '%Y-%m-%d') as dateBuilt, lengthSeconds, speedMPH, CASE WHEN hasLoop = 1 THEN 'Yes' ELSE 'No' END as hasLoop, heightRestrictionFeet FROM Rides WHERE name LIKE " + mysql.pool.escape(req.params.s + '%');
-      mysql.pool.query(query, function(error, results, fields){
+       mysql.pool.query(query, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
@@ -140,7 +140,9 @@ module.exports = function(){
         var mysql = req.app.get('mysql');
         getRidesWithNameLike(req, res, mysql, context, complete);
         getParks(res, mysql, context, complete);
+        console.log()
         function complete(){
+            console.log(context);
             callbackCount++;
             if(callbackCount >= 2){
                 res.render('rides', context);

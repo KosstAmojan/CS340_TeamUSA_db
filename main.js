@@ -18,7 +18,7 @@ app.use('/parks', require('./parks.js'));
 app.use('/rides', require('./rides.js'));
 app.use('/guests', require('./guests.js'));
 app.use('/ridesrating', require('./ridesrating.js'));
-app.use('/guestrides', require('./guestrides.js'));
+app.use('/guestride', require('./guestride.js'));
 app.use('/', express.static('public'));
 
 app.use(function(req,res){
