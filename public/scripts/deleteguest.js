@@ -3,7 +3,13 @@ function deleteGuest(id){
         url: '/guests/' + id,
         type: 'DELETE',
         success: function(result){
-            window.location.reload(true);
+            if(result.responseText != undefined){
+              alert(result.responseText)
+            }
+            else {
+              alert("Possible FK constraint in GuestRide if does not remove")
+              window.location.reload(true)
+            } 
         }
     })
 };
