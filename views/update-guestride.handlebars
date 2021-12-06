@@ -1,0 +1,30 @@
+<html>
+    <head>
+    <title></title>
+    {{#each styles}}
+        <link rel="stylesheet" href="/styles/{{this}}">
+    {{/each}}
+    </head>
+<h1>Update Guest Ride {{guestride.0.guestName}} - {{guestride.0.rideName}}:</h1>
+<form id="update-guestride" action="/guestride" method="post">
+    Select Guest: <select name="guestID" required>
+        <option value="" disabled selected>Please Select Guest</option>
+        {{#each guests}}
+        <option value="{{id}}">{{id}} - {{name}}</option>
+        {{/each}}
+    </select><br>
+    Select Ride: <select  name="rideID" required>
+        <option value="" disabled selected>Please Select Ride</option>
+        {{#each rides}}
+                <option value="{{id}}">{{id}} - {{name}}</option>
+        {{/each}}
+    </select><br>
+
+{{#each duperr}}
+<p>{{this}}</p>
+{{/each}}
+</form>
+<button onclick="updateGuestRide( '{{{guestride.0.guestrideID}}}' )">Update</button>
+<script defer>selectGuest({{{guestride.0.guestID}}});</script>
+<script defer>selectRide({{{guestride.0.rideID}}});</script>
+</html>

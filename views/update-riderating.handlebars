@@ -6,15 +6,15 @@
     {{/each}}
     </head>
 <h1>Update Ride Rating {{ridesrating.guestRideID}}:</h1>
-<form id="update-riderating" action="/parks" method="post">
-    Select Guest: <select name="guestID" min=1>
-        <option value="-1">Please Select Guest</option>
+<form id="update-riderating" action="/ridesrating" method="post">
+    Select Guest: <select name="guestID" required>
+        <option value="" disabled selected>Please Select Guest</option>
         {{#each guests}}
         <option value="{{id}}">{{id}} - {{name}}</option>
         {{/each}}
     </select><br>
-    Select Ride: <select  name="rideID" min=1>
-        <option value="-1">Please Select Ride</option>
+    Select Ride: <select  name="rideID" required>
+        <option value="" disabled selected>Please Select Ride</option>
         {{#each rides}}
                 <option value="{{id}}">{{id}} - {{name}}</option>
         {{/each}}
@@ -27,7 +27,9 @@
             <option value="4" {{ridesrating.VAL4}}>4</option>
             <option value="5" {{ridesrating.VAL5}}>5</option>
     </select><br></form>
-<button onclick="updatePark({{parks.parkID}})">Update</button>
-<script defer>"selectPark({{parks.parkID}})";</script>
+<button onclick="updateRideRating({{ridesrating.guestRideID}})">Update</button>
+<script defer>selectGuest({{ridesrating.guestID}});</script>
+<script defer>selectRide({{ridesrating.rideId}});</script>
+
 
 </html>

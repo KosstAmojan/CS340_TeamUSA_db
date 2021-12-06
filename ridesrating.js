@@ -63,7 +63,7 @@ module.exports = function(){
                 res.write(JSON.stringify(error));
                 res.end();
             }
-            context.rideratings = results;
+            context.ridesrating = results;
             complete();
         });
     }
@@ -76,7 +76,7 @@ module.exports = function(){
                 res.write(JSON.stringify(error));
                 res.end();
             }
-            context.rideratings = results;
+            context.ridesrating = results;
             complete();
         });
     }
@@ -85,7 +85,7 @@ module.exports = function(){
     router.get('/', function(req, res){
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","searchride.js","searchguest.js","change_page.js","selectedguest.js","selectedride.js"];
+        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","searchrideRR.js","searchguestRR.js","change_page.js","selectedguest.js","selectedride.js"];
         var mysql = req.app.get('mysql');
         getRidesRating(res, mysql, context, complete);
         getGuests(res, mysql, context, complete);
@@ -99,10 +99,44 @@ module.exports = function(){
         }
     });
 
+
+    router.get('/searchguests/:s', function(req, res){
+        var callbackCount = 0;
+        var context = {};
+        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","searchrideRR.js","searchguestRR.js","change_page.js","selectedguest.js","selectedride.js"];
+        var mysql = req.app.get('mysql');
+        getGuestsWithNameLike(req, res, mysql, context, complete);
+        getGuests(res, mysql, context, complete);
+        getRides(res, mysql, context, complete);
+        function complete(){
+            callbackCount++;
+            if(callbackCount >= 3){
+                console.log(context);
+                res.render('ridesrating', context);
+            }
+        }
+    });
+
+    router.get('/searchrides/:s', function(req, res){
+        var callbackCount = 0;
+        var context = {};
+        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","change_page.js","selectedguest.js","searchrideRR.js","searchguestRR.js","selectedride.js"];
+        var mysql = req.app.get('mysql');
+        getRidesWithNameLike(req, res, mysql, context, complete);
+        getGuests(res, mysql, context, complete);
+        getRides(res, mysql, context, complete);
+        function complete(){
+            callbackCount++;
+            if(callbackCount >= 3){
+                res.render('ridesrating', context);
+            }
+        }
+    });
+
     router.get('/:id', function(req, res){
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","change_page.js","selectedguest.js","selectedride.js"];
+        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","change_page.js","selectedguest.js","selectedride.js","updateriderating.js"];
         var mysql = req.app.get('mysql');
         getRideRating(res, mysql, context, req.params.id, complete);
         getGuests(res, mysql, context, complete);
@@ -116,53 +150,21 @@ module.exports = function(){
         }
     });
 
-
-    router.get('/search', function(req, res){
-        var callbackCount = 0;
-        var context = {};
-        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","change_page.js","selectedguest.js","selectedride.js"];
+    router.put('/:id', function(req, res) {
         var mysql = req.app.get('mysql');
-        getRidesRating(res, mysql, context, complete);
-        function complete(){
-            callbackCount++;
-            if(callbackCount >= 1){
-                console.log(context.rideratings);
-                res.render('ridesrating', context);
+        var sql = "UPDATE RidesRating SET guestID = ?, rideID = ?, rideDateTime = ?, ratingValue = ? WHERE guestRideID = ?";
+        var inserts = [req.body.guestID, req.body.rideID, req.body.rideDateTime, req.body.ratingValue, req.params.id];
+        console.log(inserts);
+        sql = mysql.pool.query(sql, inserts, function(error, results, fields) {
+            if(error){
+                console.log(error)
+                res.write(JSON.stringify(error));
+                res.end();
+            }else{
+                res.status(200);
+                res.end();
             }
-        }
-    });
-
-    router.get('/searchguests/:s', function(req, res){
-        var callbackCount = 0;
-        var context = {};
-        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","change_page.js","selectedguest.js","selectedride.js"];
-        var mysql = req.app.get('mysql');
-        getGuestsWithNameLike(req, res, mysql, context, complete);
-        getGuests(res, mysql, context, complete);
-        getRides(res, mysql, context, complete);
-        function complete(){
-            callbackCount++;
-            if(callbackCount >= 3){
-                console.log(context.rideratings);
-                res.render('ridesrating', context);
-            }
-        }
-    });
-
-    router.get('/searchrides/:s', function(req, res){
-        var callbackCount = 0;
-        var context = {};
-        context.jsscripts = ["deleteriderating.js","filterriderating.js","searchriderating.js","change_page.js","selectedguest.js","selectedride.js"];
-        var mysql = req.app.get('mysql');
-        getRidesWithNameLike(req, res, mysql, context, complete);
-        getGuests(res, mysql, context, complete);
-        getRides(res, mysql, context, complete);
-        function complete(){
-            callbackCount++;
-            if(callbackCount >= 3){
-                res.render('ridesrating', context);
-            }
-        }
+        });
     });
 
 
